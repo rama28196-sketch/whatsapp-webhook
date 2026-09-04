@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>மக்கள் சேவை - புகார் பதிவு</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fff5f5, #fff8e1);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .header {
+      background: linear-gradient(
+        to bottom,
+        #e31e24 0%,
+        #e31e24 35%,
+        #f7d117 35%,
+        #f7d117 65%,
+        #e31e24 65%
+      );
+
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      text-shadow: 1px 2px 3px rgba(0,0,0,0.4);
+    }
+
+    .header p {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #111;
+      font-weight: bold;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #222;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #e31e24;
+      box-shadow: 0 0 5px rgba(227,30,36,0.3);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(90deg, #e31e24, #c41218);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .header h1 {
+        font-size: 23px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>மக்கள் சேவை மையம்</h1>
+
+    <p>
+      CTR நிர்மல் குமார்<br>
+      தெற்கு பகுதி, திருப்பரங்குன்றம்
+    </p>
+  </div>
+
+
+  <div class="card">
+
+    <h2>பொது மக்கள் புகார் பதிவு</h2>
+
+    <form id="complaintForm">
+
+      <label>👤 முழு பெயர்</label>
+
+      <input
+        type="text"
+        id="name"
+        required
+        placeholder="உங்கள் முழு பெயரை உள்ளிடவும்"
+      >
+
+
+      <label>📱 மொபைல் எண்</label>
+
+      <input
+        type="tel"
+        id="mobile"
+        required
+        pattern="[0-9]{10}"
+        placeholder="10 இலக்க மொபைல் எண்"
+      >
+
+
+      <label>📍 முழு முகவரி</label>
+
+      <textarea
+        id="address"
+        required
+        placeholder="உங்கள் முழு முகவரியை உள்ளிடவும்"
+      ></textarea>
+
+
+      <label>📝 புகார் விவரம்</label>
+
+      <textarea
+        id="complaint"
+        required
+        placeholder="உங்கள் புகார் அல்லது கோரிக்கையை தெளிவாக எழுதவும்"
+      ></textarea>
+
+
+      <button type="submit" id="submitBtn">
+        புகாரை பதிவு செய்யவும்
+      </button>
+
+    </form>
+
+
+    <div id="status"></div>
+
+  </div>
+
+
+  <div class="footer">
+
+    © 2026 மக்கள் சேவை மையம்<br>
+
+    உங்கள் புகார் நேரடியாக பதிவு செய்யப்படும்.
+
+  </div>
+
+</div>
+
+
+<script>
+
+const form = document.getElementById("complaintForm");
+
+const status = document.getElementById("status");
+
+const submitBtn = document.getElementById("submitBtn");
+
+
+form.addEventListener("submit", async function(e) {
+
+  e.preventDefault();
+
+
+  const data = {
+
+    name: document.getElementById("name").value,
+
+    mobile: document.getElementById("mobile").value,
+
+    address: document.getElementById("address").value,
+
+    complaint: document.getElementById("complaint").value
+
+  };
+
+
+  submitBtn.disabled = true;
+
+  submitBtn.innerText = "புகார் பதிவு செய்யப்படுகிறது...";
+
+
+  try {
+
+    const response = await fetch(
+
+      "/.netlify/functions/whatsapp-webhook",
+
+      {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify(data)
+
+      }
+
+    );
+
+
+    const result = await response.json();
+
+
+    if (response.ok) {
+
+      status.innerHTML =
+        "✅ உங்கள் புகார் வெற்றிகரமாக பதிவு செய்யப்பட்டது.";
+
+      status.className = "success";
+
+
+      form.reset();
+
+    }
+
+    else {
+
+      status.innerHTML =
+        "❌ புகார் பதிவு செய்ய முடியவில்லை. மீண்டும் முயற்சிக்கவும்.";
+
+      status.className = "error";
+
+    }
+
+  }
+
+
+  catch (error) {
+
+    status.innerHTML =
+      "❌ இணைய இணைப்பு அல்லது Server பிழை ஏற்பட்டுள்ளது.";
+
+    status.className = "error";
+
+  }
+
+
+  submitBtn.disabled = false;
+
+  submitBtn.innerText =
+    "புகாரை பதிவு செய்யவும்";
+
+});
+
+</script>
+
+</body>
+
+</html>
