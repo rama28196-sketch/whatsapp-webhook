@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>மக்கள் குறை தீர்ப்பு பதிவு | CTR நிர்மல் குமார் மக்கள் சேவை மையம்</title>
+<style>
+:root{--red:#e60012;--dark:#202020;--light:#f7f7f7}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Tamil",sans-serif;background:linear-gradient(180deg,#fff7f7,#f5f5f5);color:#292929}
+header{background:#fff;padding:16px 20px;box-shadow:0 2px 12px #0002;text-align:center}
+header a{text-decoration:none;color:var(--red);font-weight:bold;font-size:15px}
+header h1{margin:8px 0 0;font-size:23px}
+main{max-width:760px;margin:35px auto;padding:0 18px}
+.form-card{background:#fff;border-radius:20px;padding:30px 25px;box-shadow:0 8px 28px #0002}
+.top{text-align:center;margin-bottom:28px}
+.top .icon{font-size:46px}
+.top h2{margin:8px 0;font-size:30px}
+.top p{color:#666;line-height:1.6}
+label{display:block;font-weight:bold;font-size:19px;margin:20px 0 9px}
+input,textarea{width:100%;padding:17px;border:1px solid #d5d5d5;border-radius:12px;font-size:18px;outline:none}
+input:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px #e6001215}
+textarea{min-height:145px;resize:vertical}
+button{width:100%;margin-top:28px;padding:18px;background:var(--red);color:#fff;border:0;border-radius:12px;font-size:21px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.65;cursor:not-allowed}
+#status{text-align:center;margin-top:18px;font-weight:bold;line-height:1.6}
+.success{color:#087b2d}.error{color:#c40000}.info{color:#555}
+.note{background:#fff5c9;border-left:5px solid #f0bd00;padding:14px;border-radius:8px;margin-top:25px;line-height:1.6}
+footer{text-align:center;padding:30px 15px;color:#666;font-size:14px}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/">← முகப்பு பக்கத்திற்கு திரும்பவும்</a>
+  <h1>CTR நிர்மல் குமார் மக்கள் சேவை மையம்</h1>
+</header>
+
+<main>
+  <div class="form-card">
+    <div class="top">
+      <div class="icon">📋</div>
+      <h2>மக்கள் குறை தீர்ப்பு பதிவு</h2>
+      <p>உங்கள் குறையை பதிவு செய்ய கீழே உள்ள தகவல்களை சரியாக நிரப்பவும்.</p>
+    </div>
+
+    <form id="complaintForm">
+      <label for="name">👤 முழு பெயர்</label>
+      <input id="name" name="name" type="text" placeholder="உங்கள் பெயரை பதிவு செய்யவும்" required>
+
+      <label for="mobile">📱 மொபைல் எண்</label>
+      <input id="mobile" name="mobile" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10 இலக்க மொபைல் எண்" required>
+
+      <label for="address">📍 முழு முகவரி</label>
+      <textarea id="address" name="address" placeholder="உங்கள் முகவரியை பதிவு செய்யவும்" required></textarea>
+
+      <label for="complaint">📝 புகார் விவரம்</label>
+      <textarea id="complaint" name="complaint" placeholder="உங்கள் குறையை தெளிவாக பதிவு செய்யவும்" required></textarea>
+
+      <button id="submitBtn" type="submit">புகார் பதிவு செய்யவும்</button>
+      <div id="status" role="status"></div>
+    </form>
+
+    <div class="note">
+      <b>முக்கிய அறிவிப்பு:</b> சரியான தகவல்களை மட்டும் பதிவு செய்யவும். உங்கள் பதிவு சம்பந்தப்பட்ட மக்கள் சேவை பொறுப்பாளரின் கவனத்திற்கு அனுப்பப்படும்.
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 CTR நிர்மல் குமார் மக்கள் சேவை மையம்
+</footer>
+
+<script>
+const form = document.getElementById("complaintForm");
+const statusBox = document.getElementById("status");
+const submitBtn = document.getElementById("submitBtn");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const mobile = document.getElementById("mobile").value.trim();
+  if (!/^[0-9]{10}$/.test(mobile)) {
+    statusBox.className = "error";
+    statusBox.textContent = "சரியான 10 இலக்க மொபைல் எண்ணை பதிவு செய்யவும்.";
+    return;
+  }
+
+  const data = {
+    name: document.getElementById("name").value.trim(),
+    mobile: mobile,
+    address: document.getElementById("address").value.trim(),
+    complaint: document.getElementById("complaint").value.trim()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "பதிவு செய்யப்படுகிறது...";
+  statusBox.className = "info";
+  statusBox.textContent = "தயவுசெய்து காத்திருக்கவும்...";
+
+  try {
+    const response = await fetch("/.netlify/functions/whatsapp-webhook", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || "புகார் பதிவு செய்ய முடியவில்லை.");
+    }
+
+    statusBox.className = "success";
+    statusBox.textContent = "✓ உங்கள் புகார் வெற்றிகரமாக பதிவு செய்யப்பட்டது. நன்றி!";
+    form.reset();
+
+  } catch (error) {
+    statusBox.className = "error";
+    statusBox.textContent = "✗ " + (error.message || "சில தொழில்நுட்ப பிரச்சினை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "புகார் பதிவு செய்யவும்";
+  }
+});
+</script>
+
+</body>
+</html>
